@@ -2,6 +2,13 @@ Strict
 
 Public
 
+' Preprocessor related:
+#If BRL_GAMETARGET_IMPLEMENTED
+	#TIME_MOJO_IMPLEMENTED = True
+#Else
+	#TIME_MOJO_IMPLEMENTED = False
+#End
+
 ' Imports:
 Import external
 
@@ -14,7 +21,7 @@ Import external
 	End
 #End
 
-#If Not MILLISECS_IMPLEMENTED
+#If Not MILLISECS_IMPLEMENTED And Not TIME_MOJO_IMPLEMENTED
 	Function Millisecs:Int()
 		Return 0
 	End
