@@ -3,26 +3,39 @@ Strict
 Public
 
 ' Preprocessor related:
+#If BRL_GAMETARGET_IMPLEMENTED 'LANG = "cpp" And TARGET <> "glfw" And TARGET <> "win8" And TARGET <> "sexy"
+	#TIME_MOJO_IMPLEMENTED = True
+#Else
+	#TIME_MOJO_IMPLEMENTED = False
+#End
+
 #If LANG = "cpp" 'And TARGET <> "ios"
 	#DELAY_IMPLEMENTED = True
+	
+	#If Not TIME_MOJO_IMPLEMENTED
+		#MILLISECS_IMPLEMENTED = True
+	#Else
+		#MILLISECS_IMPLEMENTED = False
+	#End
 #End
 
 ' Imports (Monkey):
 'Import mojo
-
-#If BRL_GAMETARGET_IMPLEMENTED 'LANG = "cpp" And TARGET <> "glfw" And TARGET <> "win8" And TARGET <> "sexy"
-	#MOJO_IMPLEMENTED = True
-#Else
-	#MOJO_IMPLEMENTED = False
-#End
 
 ' Imports (Native):
 #If DELAY_IMPLEMENTED
 	Import "native/delay.${LANG}"
 #End
 
-#If Not MOJO_IMPLEMENTED
+#If MILLISECS_IMPLEMENTED
 	Import "native/millisecs.${LANG}"
+	
+	#Rem
+		' No longer needed:
+		#If HOST = "linux"
+			#CC_LIBS += "-lrt"
+		#End
+	#End
 #End
 
 ' External bindings:
@@ -51,7 +64,7 @@ Extern
 	#End
 #End
 
-#If Not MOJO_IMPLEMENTED
+#If MILLISECS_IMPLEMENTED
 	Function Millisecs:Int()="millisecs"
 #End
 
