@@ -3,14 +3,25 @@ Strict
 Public
 
 ' Preprocessor related:
+#TIME_WRAP_MOJO = False
+
 #If BRL_GAMETARGET_IMPLEMENTED
 	#TIME_MOJO_IMPLEMENTED = True
 #Else
 	#TIME_MOJO_IMPLEMENTED = False
 #End
 
-' Imports:
+' Imports (Public):
 Import external
+
+' Imports (Private):
+Private
+
+#If TIME_MOJO_IMPLEMENTED
+	Import mojo.app
+#End
+
+Public
 
 ' Functions:
 
@@ -21,8 +32,12 @@ Import external
 	End
 #End
 
-#If Not MILLISECS_IMPLEMENTED And Not TIME_MOJO_IMPLEMENTED
+#If Not MILLISECS_IMPLEMENTED And (Not TIME_MOJO_IMPLEMENTED Or TIME_WRAP_MOJO)
 	Function Millisecs:Int()
-		Return 0
+		#If TIME_WRAP_MOJO
+			Return app.Millisecs()
+		#Else
+			Return 0
+		#End
 	End
 #End
