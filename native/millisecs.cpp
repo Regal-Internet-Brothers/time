@@ -30,49 +30,49 @@
 // Functions:
 inline int millisecs() // inline int uptime()
 {
-        #if defined(_WIN32) || defined(WIN32)
-			return GetTickCount();
+	#if defined(_WIN32) || defined(WIN32)
+		return GetTickCount();
+	
+	#elif defined(__linux__)
+		/*
+		struct timespec
+		{
+			// Fields:
+			time_t tv_sec; // Seconds.
+			long tv_nsec; // Nanoseconds.
+		};
+		*/
 		
-		#elif defined(__linux__)
-			/*
-			struct timespec
-			{
-				// Fields:
-		        time_t tv_sec; // Seconds.
-		        long tv_nsec; // Nanoseconds.
-			};
-			*/
-			
-			/*
-			struct sysinfo info;
-			sysinfo(&info);
-			
-			return info.uptime;
-			*/
-			
-			// Allocate a time-value structure.
-			struct timeval tv;
-			
-			// Get the time of day.
-			gettimeofday(&tv, NULL);
-			
-			// Pretty basic, just convert both of the integers to milliseconds.
-			return (int)((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+		/*
+		struct sysinfo info;
+		sysinfo(&info);
+		
+		return info.uptime;
+		*/
+		
+		// Allocate a time-value structure.
+		struct timeval tv;
+		
+		// Get the time of day.
+		gettimeofday(&tv, NULL);
+		
+		// Pretty basic, just convert both of the integers to milliseconds.
+		return (int)((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 
-		#elif defined(__APPLE__) && defined(__MACH__)			
-			struct timeval boottime;
-			size_t len = sizeof(boottime);
-			int mib[2] = { CTL_KERN, KERN_BOOTTIME };
-		    
-			if (sysctl(mib, 2, &boottime, &len, NULL, 0) < 0)
-				return -1.0;
-			
-			time_t bsec = boottime.tv_sec, csec = time(NULL);
-			
-			return difftime(csec, bsec);
-		#else
-			return 0;
-		#endif
+	#elif defined(__APPLE__) && defined(__MACH__)			
+		struct timeval boottime;
+		size_t len = sizeof(boottime);
+		int mib[2] = { CTL_KERN, KERN_BOOTTIME };
+		
+		if (sysctl(mib, 2, &boottime, &len, NULL, 0) < 0)
+			return -1.0;
+		
+		time_t bsec = boottime.tv_sec, csec = time(NULL);
+		
+		return difftime(csec, bsec);
+	#else
+		return 0;
+	#endif
 }
 
 /*
