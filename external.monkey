@@ -9,7 +9,7 @@ Public
 	#TIME_MOJO_IMPLEMENTED = False
 #End
 
-#If LANG = "cpp" 'And TARGET <> "ios"
+#If LANG = "cpp" Or LANG = "cs" ' And TARGET <> "ios"
 	#DELAY_IMPLEMENTED = True
 	
 	#If Not TIME_MOJO_IMPLEMENTED
@@ -19,15 +19,19 @@ Public
 	#End
 #End
 
+#If LANG = "cs"
+	#DELAY_EXTERNAL_FILE = True
+#End
+
 ' Imports (Monkey):
 'Import mojo
 
 ' Imports (Native):
-#If DELAY_IMPLEMENTED
+#If DELAY_IMPLEMENTED And Not DELAY_EXTERNAL_FILE
 	Import "native/delay.${LANG}"
 #End
 
-#If MILLISECS_IMPLEMENTED
+#If MILLISECS_IMPLEMENTED And Not MILLISECS_EXTERNAL_FILE
 	Import "native/millisecs.${LANG}"
 	
 	#Rem
@@ -43,24 +47,15 @@ Extern
 
 #If DELAY_IMPLEMENTED
 	' Private external-wrapper(s):
-	
-	#If TARGET = "win8"
-		Extern Private
-		
-		' Windows 8 specific:
-		Function WIN8_Delay:Void(MS:Int)="Concurrency::wait"
-		
-		Public
-		
-		' Wrappers:
-		Function Delay:Bool(MS:Int)
-			WIN8_Delay(MS)
-			
-			' Return the default response.
-			Return True
-		End
-	#Else	
-		Function Delay:Bool(MS:Int)="delay"
+	#If LANG = "cpp"
+		#If TARGET = "win8"
+			' Windows 8 specific:
+			Function __Native_Delay:Void(MS:Int)="Concurrency::wait"
+		#Else	
+			Function Delay:Bool(MS:Int)="delay"
+		#End
+	#Elseif LANG = "cs"
+		Function __Native_Delay:Void(MS:Int) = "System.Threading.Thread.Sleep"
 	#End
 #End
 
@@ -69,3 +64,14 @@ Extern
 #End
 
 Public
+
+' Wrappers for external functions:
+#If LANG = "cs" Or TARGET = "win8"
+	' This wrapper is for external commands which don't have return types:
+	Function Delay:Bool(MS:Int)
+		__Native_Delay(MS)
+		
+		' Return the default response.
+		Return True
+	End
+#End
