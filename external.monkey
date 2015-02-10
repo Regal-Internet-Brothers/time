@@ -49,19 +49,26 @@ Extern
 #If DELAY_IMPLEMENTED
 	' Private external-wrapper(s):
 	#If LANG = "cpp"
-		#If TARGET = "win8" Or TARGET = "winrt"
-			' Windows 8 specific:
+		#If (TARGET = "win8" Or TARGET = "winrt")
 			Function __Native_Delay:Void(MS:Int)="Concurrency::wait"
-		#Else	
-			Function Delay:Bool(MS:Int)="delay"
+		#Else
+			Function Delay:Bool(MS:Int)="time_module::delay"
 		#End
 	#Elseif LANG = "cs"
 		Function __Native_Delay:Void(MS:Int) = "System.Threading.Thread.Sleep"
+	#Else
+		Function Delay:Bool(MS:Int)="time.delay"
 	#End
 #End
 
 #If MILLISECS_IMPLEMENTED
-	Function Millisecs:Int()="millisecs"
+	#If LANG = "cpp"
+		Function Millisecs:Int()="time_module::timeSystem<>::millisecs"
+		Function InitMillisecs:Int()="time_module::timeSystem<>::initMillisecs"
+	#Else
+		Function Millisecs:Int()="time.millisecs"
+		Function InitMillisecs:Int()="time.initMillisecs"
+	#End
 #End
 
 Public

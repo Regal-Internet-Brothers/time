@@ -5,12 +5,6 @@ Public
 ' Preprocessor related:
 #TIME_WRAP_MOJO = False
 
-#If BRL_GAMETARGET_IMPLEMENTED
-	#TIME_MOJO_IMPLEMENTED = True
-#Else
-	#TIME_MOJO_IMPLEMENTED = False
-#End
-
 ' Imports (Public):
 Import external
 
@@ -39,5 +33,9 @@ Public
 		#Else
 			Return 0
 		#End
+	End
+	
+	Function InitMillisecs:Int()
+		Return 0
 	End
 #End
