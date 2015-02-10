@@ -28,10 +28,6 @@ Public
 'Import mojo
 
 ' Imports (Native):
-#If DELAY_IMPLEMENTED And DELAY_EXTERNAL_FILE
-	Import "native/delay.${LANG}"
-#End
-
 #If MILLISECS_IMPLEMENTED And MILLISECS_EXTERNAL_FILE
 	Import "native/millisecs.${LANG}"
 	
@@ -43,6 +39,10 @@ Public
 	#End
 #End
 
+#If DELAY_IMPLEMENTED And DELAY_EXTERNAL_FILE
+	Import "native/delay.${LANG}"
+#End
+
 ' External bindings:
 Extern
 
@@ -52,7 +52,7 @@ Extern
 		#If (TARGET = "win8" Or TARGET = "winrt")
 			Function __Native_Delay:Void(MS:Int)="Concurrency::wait"
 		#Else
-			Function Delay:Bool(MS:Int)="time_module::delay"
+			Function Delay:Bool(MS:Int)="time_module::delay" ' "time_module::delay<>"
 		#End
 	#Elseif LANG = "cs"
 		Function __Native_Delay:Void(MS:Int) = "System.Threading.Thread.Sleep"

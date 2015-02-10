@@ -5,7 +5,7 @@
 // Nothing so far.
 
 // Includes:
-#if defined(_WIN32) || defined(WIN32)
+#if defined(WIN32) || defined(_WIN32) || defined(_WIN64)
 	//#define WIN32_LEAN_AND_MEAN
 	//#include <windows.h>
 #else
@@ -40,7 +40,6 @@ namespace time_module
 			{
 				#if defined(_WIN32) || defined(WIN32)
 					return (metric)GetTickCount();
-				
 				#elif defined(__linux__)
 					/*
 					struct timespec
@@ -66,7 +65,6 @@ namespace time_module
 					
 					// Pretty basic, just convert both of the integers to milliseconds.
 					return ((metric)((tv.tv_sec * 1000) + (tv.tv_usec / 1000)));
-			
 				#elif defined(__APPLE__) && defined(__MACH__)			
 					struct timeval boottime;
 					size_t len = sizeof(boottime);
@@ -77,7 +75,7 @@ namespace time_module
 					
 					time_t bsec = boottime.tv_sec, csec = time(NULL);
 					
-					return difftime(csec, bsec);
+					return (metric)difftime(csec, bsec);
 				#else
 					return 0;
 				#endif
