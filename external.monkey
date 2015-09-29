@@ -9,9 +9,11 @@ Public
 	#TIME_MOJO_IMPLEMENTED = False
 #End
 
-#If LANG = "cpp" Or LANG = "cs" ' And TARGET <> "ios"
+#If TARGET = "glfw" Or TARGET = "stdcpp"
 	#DELAY_IMPLEMENTED = True
-	
+#End
+
+#If LANG = "cpp" Or LANG = "cs" ' And TARGET <> "ios"
 	#If Not TIME_MOJO_IMPLEMENTED
 		#MILLISECS_IMPLEMENTED = True
 	#Else
@@ -20,12 +22,17 @@ Public
 #End
 
 #If LANG = "cpp" And TARGET <> "win8" And TARGET <> "winrt"
-	#DELAY_EXTERNAL_FILE = True
 	#MILLISECS_EXTERNAL_FILE = True
 #End
 
-' Imports (Monkey):
-'Import mojo
+' Imports (Monkey) (Private):
+Private
+
+#If DELAY_IMPLEMENTED
+	Import brl.process
+#End
+
+Public
 
 ' Imports (Native):
 #If MILLISECS_IMPLEMENTED And MILLISECS_EXTERNAL_FILE
@@ -39,27 +46,8 @@ Public
 	#End
 #End
 
-#If DELAY_IMPLEMENTED And DELAY_EXTERNAL_FILE
-	Import "native/delay.${LANG}"
-#End
-
 ' External bindings:
 Extern
-
-#If DELAY_IMPLEMENTED
-	' Private external-wrapper(s):
-	#If LANG = "cpp"
-		#If (TARGET = "win8" Or TARGET = "winrt")
-			Function __Native_Delay:Void(MS:Int)="Concurrency::wait"
-		#Else
-			Function Delay:Bool(MS:Int)="time_module::delay" ' "time_module::delay<>"
-		#End
-	#Elseif LANG = "cs"
-		Function __Native_Delay:Void(MS:Int) = "System.Threading.Thread.Sleep"
-	#Else
-		Function Delay:Bool(MS:Int)="time.delay"
-	#End
-#End
 
 #If MILLISECS_IMPLEMENTED
 	#If LANG = "cpp"
@@ -73,11 +61,10 @@ Extern
 
 Public
 
-' Wrappers for external functions:
-#If LANG = "cs" Or TARGET = "win8" Or TARGET = "winrt"
-	' This wrapper is for external commands which don't have return types:
+' Functions:
+#If DELAY_IMPLEMENTED
 	Function Delay:Bool(MS:Int)
-		__Native_Delay(MS)
+		Sleep(MS)
 		
 		' Return the default response.
 		Return True
