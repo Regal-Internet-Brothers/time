@@ -3,7 +3,7 @@ Strict
 Public
 
 ' Preprocessor related:
-#TIME_WRAP_MOJO = False
+#TIME_WRAP_MOJO = True ' False
 
 ' Imports (Public):
 Import external
