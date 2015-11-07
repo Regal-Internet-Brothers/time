@@ -17,6 +17,13 @@ Private
 
 Public
 
+' Aliases:
+#If Not MILLISECS_IMPLEMENTED
+	#If TIME_MOJO_IMPLEMENTED And TIME_WRAP_MOJO
+		Alias Millisecs = app.Millisecs
+	#End
+#End
+
 ' Functions:
 
 ' If we couldn't find a good enough version, use placeholders:
@@ -26,14 +33,12 @@ Public
 	End
 #End
 
-#If Not MILLISECS_IMPLEMENTED And (Not TIME_MOJO_IMPLEMENTED Or TIME_WRAP_MOJO)
-	Function Millisecs:Int()
-		#If TIME_WRAP_MOJO
-			Return app.Millisecs()
-		#Else
+#If Not MILLISECS_IMPLEMENTED
+	#If Not TIME_MOJO_IMPLEMENTED And Not TIME_WRAP_MOJO
+		Function Millisecs:Int()
 			Return 0
-		#End
-	End
+		End
+	#End
 	
 	Function InitMillisecs:Int()
 		Return 0
