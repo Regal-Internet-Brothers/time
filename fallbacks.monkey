@@ -20,6 +20,8 @@ Public
 ' Aliases:
 #If Not MILLISECS_IMPLEMENTED
 	#If TIME_MOJO_IMPLEMENTED And TIME_WRAP_MOJO
+		#MILLISECS_IMPLEMENTED = True
+		
 		Alias Millisecs = app.Millisecs
 	#End
 #End

@@ -16,8 +16,6 @@ Public
 #If LANG = "cpp" Or LANG = "cs" ' And TARGET <> "ios"
 	#If Not TIME_MOJO_IMPLEMENTED
 		#MILLISECS_IMPLEMENTED = True
-	#Else
-		#MILLISECS_IMPLEMENTED = False
 	#End
 #End
 
